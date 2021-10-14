@@ -1,0 +1,2 @@
+# InventoryManagerJava
+School Project
