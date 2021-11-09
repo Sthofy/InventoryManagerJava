@@ -9,7 +9,6 @@ public class Main{
         Login.setResizable(false);
         Login.setSize(360, 500);
         Login.setVisible(true);
-        DatabaseManager.getConnectin();
     }
     
 }
