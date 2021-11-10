@@ -266,9 +266,15 @@ public class LoginWindow extends javax.swing.JFrame {
                         PreparedStatement saveCredents = conn.prepareStatement("INSERT INTO usercredents VALUES ('" + username + "'," + "'" + password + "')");
                         saveCredents.executeUpdate();
                     }
+
+                    MainWindow mainWindow = new MainWindow();
+                    mainWindow.setResizable(false);
+                    mainWindow.setDefaultCloseOperation(PromptDialog.DISPOSE_ON_CLOSE);
+                    mainWindow.setVisible(true);
+                    this.dispose();
                 } else {
                     //JOptionPane.showMessageDialog(this, "Wrong Username or Password", "Error", JOptionPane.ERROR_MESSAGE);
-                    PromptDialog promptDialog=new PromptDialog("Error","Wrong Username Or Password!");
+                    PromptDialog promptDialog = new PromptDialog("Error", "Wrong Username Or Password!");
                     promptDialog.setResizable(false);
                     promptDialog.setDefaultCloseOperation(PromptDialog.DISPOSE_ON_CLOSE);
                     promptDialog.setVisible(true);
