@@ -1,10 +1,20 @@
-package inventorymanagerapp;
+package inventorymanagerapp.conrollers;
 
+import inventorymanagerapp.others.DatabaseManager;
+import inventorymanagerapp.others.PasswordManager;
 import java.awt.Image;
+import java.sql.*;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 
+/**
+ *
+ * @author Suhajda Kristóf - IMVC5O
+ */
 public class LoginWindow extends javax.swing.JFrame {
+
+    public String loggerUsername = "";
+    public String loggerAccessLevel = "";
 
     public LoginWindow() {
         initComponents();
@@ -27,11 +37,13 @@ public class LoginWindow extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         TxtBxPassword = new javax.swing.JPasswordField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        BtnLogin = new javax.swing.JButton();
+        BtnClear = new javax.swing.JButton();
         lblIcon = new javax.swing.JLabel();
         chkBxPasswordMask = new javax.swing.JCheckBox();
         jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        ChkBxSaveCredents = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(71, 120, 197));
@@ -76,11 +88,21 @@ public class LoginWindow extends javax.swing.JFrame {
 
         TxtBxPassword.setText("jPasswordField1");
 
-        jButton1.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
-        jButton1.setText("Login");
+        BtnLogin.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        BtnLogin.setText("Login");
+        BtnLogin.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                BtnLoginMouseClicked(evt);
+            }
+        });
 
-        jButton2.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
-        jButton2.setText("Clear");
+        BtnClear.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        BtnClear.setText("Clear");
+        BtnClear.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                BtnClearMouseClicked(evt);
+            }
+        });
 
         lblIcon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblIcon.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -101,6 +123,14 @@ public class LoginWindow extends javax.swing.JFrame {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Show Password:");
 
+        jLabel5.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("Save Credents:");
+
+        ChkBxSaveCredents.setBackground(new java.awt.Color(71, 120, 197));
+        ChkBxSaveCredents.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        ChkBxSaveCredents.setFocusPainted(false);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -114,22 +144,28 @@ public class LoginWindow extends javax.swing.JFrame {
                             .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(TxtBxUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(TxtBxPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addGap(18, 18, 18)
-                                .addComponent(chkBxPasswordMask))
-                            .addComponent(TxtBxUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(TxtBxPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(chkBxPasswordMask))))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(99, 99, 99)
                         .addComponent(lblIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(65, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(62, 62, 62)
-                .addComponent(jButton1)
+                .addComponent(BtnLogin)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton2)
+                .addComponent(BtnClear)
                 .addGap(55, 55, 55))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel5)
+                .addGap(3, 3, 3)
+                .addComponent(ChkBxSaveCredents)
+                .addGap(102, 102, 102))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -150,9 +186,13 @@ public class LoginWindow extends javax.swing.JFrame {
                     .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addGap(95, 95, 95))
+                    .addComponent(BtnLogin)
+                    .addComponent(BtnClear))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(ChkBxSaveCredents, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5))
+                .addGap(54, 54, 54))
         );
 
         lblIcon.getAccessibleContext().setAccessibleName("lblIcon");
@@ -171,6 +211,36 @@ public class LoginWindow extends javax.swing.JFrame {
             TxtBxPassword.setEchoChar((Character) UIManager.get("PasswordField.echoChar"));
         }
     }//GEN-LAST:event_chkBxPasswordMaskAction
+
+    private void BtnClearMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BtnClearMouseClicked
+        TxtBxUsername.setText("");
+        TxtBxPassword.setText("");
+    }//GEN-LAST:event_BtnClearMouseClicked
+
+    private void BtnLoginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BtnLoginMouseClicked
+        String username = TxtBxUsername.getText(), password = PasswordManager.hash(TxtBxPassword.getText());
+
+        try {
+            Connection conn = DatabaseManager.getConnectin();
+            String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            ps.setString(1, username);
+            ps.setString(2, password);
+
+            if (ChkBxSaveCredents.isSelected()) {
+                PreparedStatement delPrevCredents = conn.prepareStatement("DELETE FROM usercredents");
+                delPrevCredents.executeUpdate();
+
+                PreparedStatement saveCredents = conn.prepareStatement("INSERT INTO usercredetns VALUES ('" + username + "'," + "'" + password + "')");
+                saveCredents.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+    }//GEN-LAST:event_BtnLoginMouseClicked
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -205,15 +275,17 @@ public class LoginWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BtnClear;
+    private javax.swing.JButton BtnLogin;
+    private javax.swing.JCheckBox ChkBxSaveCredents;
     private javax.swing.JPasswordField TxtBxPassword;
     private javax.swing.JTextField TxtBxUsername;
     private javax.swing.JCheckBox chkBxPasswordMask;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lblIcon;

@@ -1,12 +1,16 @@
-package inventorymanagerapp;
+package inventorymanagerapp.others;
 
 import java.sql.*;
 
+/**
+ *
+ * @author Suhajda Kristóf - IMVC5O
+ */
 public class DatabaseManager {
 
-    private static final String url = "jdbc:mysql://localhost:3306/inventorymanagerdb";
+    private static final String url = "";
     private static final String username = "root";
-    private static final String password ="Suhajdak970";
+    private static final String password = "Suhajdak970";
 
     public static Connection getConnectin() {
         Connection conn;
