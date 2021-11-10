@@ -19,10 +19,9 @@ public class PasswordManager {
         return salt;
     }
 
-    private static String hash(String password, String salt) {
+    public static String hash(String password, String salt) {
         try {
             MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
-            System.out.println(salt);
             String passWithSalt = password + salt;
             byte[] passBytes = passWithSalt.getBytes();
             byte[] passHash = sha256.digest(passBytes);
@@ -31,8 +30,7 @@ public class PasswordManager {
                 sb.append(Integer.toString((passHash[i] & 0xff) + 0x100, 16).substring(1));
             }
             String generatedPassword = sb.toString();
-            System.out.println(generatedPassword);
-            return salt+generatedPassword;
+            return salt + generatedPassword;
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -40,8 +38,7 @@ public class PasswordManager {
     }
 
     public static boolean isValidPassword(String password, String salt, String expectedHash) {
-        String generatedPassword =hash(password, salt);
-        System.out.println(generatedPassword);
+        String generatedPassword = hash(password, salt);
         if (generatedPassword.equals(expectedHash)) {
             return true;
         } else {

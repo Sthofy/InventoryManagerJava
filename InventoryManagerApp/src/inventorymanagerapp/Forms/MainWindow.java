@@ -1,4 +1,4 @@
-package inventorymanagerapp.conrollers;
+package inventorymanagerapp.Forms;
 
 /**
  *

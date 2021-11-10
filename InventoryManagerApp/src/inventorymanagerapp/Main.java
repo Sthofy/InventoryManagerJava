@@ -1,6 +1,6 @@
 package inventorymanagerapp;
 
-import inventorymanagerapp.conrollers.LoginWindow;
+import inventorymanagerapp.Forms.LoginWindow;
 
 /**
  *

@@ -1,10 +1,11 @@
-package inventorymanagerapp.conrollers;
+package inventorymanagerapp.Forms;
 
 import inventorymanagerapp.others.DatabaseManager;
 import inventorymanagerapp.others.PasswordManager;
 import java.awt.Image;
 import java.sql.*;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
@@ -15,7 +16,6 @@ public class LoginWindow extends javax.swing.JFrame {
 
     public String loggerUsername = "";
     public String loggerAccessLevel = "";
-    String salt = "[B@27eaff5b";
 
     public LoginWindow() {
         initComponents();
@@ -24,7 +24,7 @@ public class LoginWindow extends javax.swing.JFrame {
     }
 
     private void ScaleImage() {
-        ImageIcon MyLoginPageIcon = new ImageIcon(new ImageIcon("./images/LoginPage_User_ICon.png").getImage().getScaledInstance(150, 150, Image.SCALE_DEFAULT));
+        ImageIcon MyLoginPageIcon = new ImageIcon(new ImageIcon("./src/inventorymanagerapp/images/LoginPage_User_ICon.png").getImage().getScaledInstance(150, 150, Image.SCALE_DEFAULT));
         lblIcon.setIcon(MyLoginPageIcon);
     }
 
@@ -67,6 +67,7 @@ public class LoginWindow extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(71, 120, 197));
+        setName("LoginFrame"); // NOI18N
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(23, 35, 51));
@@ -252,7 +253,7 @@ public class LoginWindow extends javax.swing.JFrame {
                 String storedPassword = rs.getString("Password");
                 String salt = storedPassword.substring(0, 10);
 
-                if (PasswordManager.isValidPassword(password, salt, storedPassword))  {
+                if (PasswordManager.isValidPassword(password, salt, storedPassword)) {
                     System.out.println("sikeres bejelentkezés");
                     loggerUsername = rs.getString("Username");
                     loggerAccessLevel = rs.getString("AccessLevel");
@@ -264,10 +265,13 @@ public class LoginWindow extends javax.swing.JFrame {
 
                         PreparedStatement saveCredents = conn.prepareStatement("INSERT INTO usercredents VALUES ('" + username + "'," + "'" + password + "')");
                         saveCredents.executeUpdate();
-                        System.out.println("Beszúrás kész");
                     }
                 } else {
-                    System.out.println("Hibás jelszó");
+                    //JOptionPane.showMessageDialog(this, "Wrong Username or Password", "Error", JOptionPane.ERROR_MESSAGE);
+                    PromptDialog promptDialog=new PromptDialog("Error","Wrong Username Or Password!");
+                    promptDialog.setResizable(false);
+                    promptDialog.setDefaultCloseOperation(PromptDialog.DISPOSE_ON_CLOSE);
+                    promptDialog.setVisible(true);
                 }
             }
 
