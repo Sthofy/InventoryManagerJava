@@ -15,15 +15,35 @@ public class LoginWindow extends javax.swing.JFrame {
 
     public String loggerUsername = "";
     public String loggerAccessLevel = "";
+    String salt = "[B@27eaff5b";
 
     public LoginWindow() {
         initComponents();
         ScaleImage();
+        FillFromUserCredents();
     }
 
     private void ScaleImage() {
         ImageIcon MyLoginPageIcon = new ImageIcon(new ImageIcon("./images/LoginPage_User_ICon.png").getImage().getScaledInstance(150, 150, Image.SCALE_DEFAULT));
         lblIcon.setIcon(MyLoginPageIcon);
+    }
+
+    private void FillFromUserCredents() {
+
+        try {
+            Connection connection = DatabaseManager.getConnection();
+            PreparedStatement getCredents = connection.prepareStatement("SELECT * FROM usercredents");
+            ResultSet resultSet = getCredents.executeQuery();
+
+            if (resultSet.next()) {
+                TxtBxUsername.setText(resultSet.getString("Username")); //Getting Saved Username
+                TxtBxPassword.setText(resultSet.getString("Password")); //Getting Saved Password
+            }
+
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -218,23 +238,39 @@ public class LoginWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_BtnClearMouseClicked
 
     private void BtnLoginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BtnLoginMouseClicked
-        String username = TxtBxUsername.getText(), password = PasswordManager.hash(TxtBxPassword.getText());
+        String username = TxtBxUsername.getText(), password = TxtBxPassword.getText();
 
         try {
-            Connection conn = DatabaseManager.getConnectin();
-            String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+            Connection conn = DatabaseManager.getConnection();
+            String sql = "SELECT * FROM users WHERE username = ? ";
             PreparedStatement ps = conn.prepareStatement(sql);
 
             ps.setString(1, username);
-            ps.setString(2, password);
 
-            if (ChkBxSaveCredents.isSelected()) {
-                PreparedStatement delPrevCredents = conn.prepareStatement("DELETE FROM usercredents");
-                delPrevCredents.executeUpdate();
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                String storedPassword = rs.getString("Password");
+                String salt = storedPassword.substring(0, 10);
 
-                PreparedStatement saveCredents = conn.prepareStatement("INSERT INTO usercredetns VALUES ('" + username + "'," + "'" + password + "')");
-                saveCredents.executeUpdate();
+                if (PasswordManager.isValidPassword(password, salt, storedPassword))  {
+                    System.out.println("sikeres bejelentkezés");
+                    loggerUsername = rs.getString("Username");
+                    loggerAccessLevel = rs.getString("AccessLevel");
+                    System.out.println(loggerUsername + " " + loggerAccessLevel);
+
+                    if (ChkBxSaveCredents.isSelected()) {
+                        PreparedStatement delPrevCredents = conn.prepareStatement("DELETE FROM usercredents");
+                        delPrevCredents.executeUpdate();
+
+                        PreparedStatement saveCredents = conn.prepareStatement("INSERT INTO usercredents VALUES ('" + username + "'," + "'" + password + "')");
+                        saveCredents.executeUpdate();
+                        System.out.println("Beszúrás kész");
+                    }
+                } else {
+                    System.out.println("Hibás jelszó");
+                }
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
