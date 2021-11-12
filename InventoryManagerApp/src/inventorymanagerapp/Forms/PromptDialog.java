@@ -1,15 +1,12 @@
 package inventorymanagerapp.Forms;
 
-import java.awt.Image;
-import javax.swing.ImageIcon;
-
 /**
  *
  * @author Suhajda Kristóf - IMVC5O
  */
 public class PromptDialog extends javax.swing.JFrame {
-  
-    public PromptDialog(String header,String error) {
+
+    public PromptDialog(String header, String error) {
         initComponents();
         setMessage(header, error);
     }
@@ -17,7 +14,8 @@ public class PromptDialog extends javax.swing.JFrame {
     private PromptDialog() {
         initComponents();
     }
-    private void setMessage(String header,String error){
+
+    private void setMessage(String header, String error) {
         lblHeader.setText(header);
         lblError.setText(error);
     }
