@@ -1,5 +1,9 @@
 package inventorymanagerapp.Forms;
 
+import inventorymanagerapp.others.ImageEditor;
+import inventorymanagerapp.others.RoundedPanel;
+import java.awt.*;
+
 /**
  *
  * @author Suhajda Kristóf - IMVC5O
@@ -8,74 +12,207 @@ public class MainWindow extends javax.swing.JFrame {
 
     public MainWindow() {
         initComponents();
+        firstOpened();
+        setLabels();
+    }
+    
+    private void setLabels(){
+        ImageEditor.ScaleImage(lblIcon, "User_Icon.png");
+        
+        lblUsername.setText(LoginWindow.loggerUsername);
+        if (LoginWindow.loggerAccessLevel.equals("Admin")) {
+            lblAccessLevel.setForeground(Color.red);
+            lblAccessLevel.setText(LoginWindow.loggerAccessLevel);         
+        } else {
+            lblAccessLevel.setText(LoginWindow.loggerAccessLevel);
+            btnAdmin.hide();
+        }
+    }
+    
+    private void firstOpened(){
+        DashboardPanel dashboardPanel= new DashboardPanel();
+        dashboardPanel.setSize(970,670);
+        dashboardPanel.setLocation(15, 15);
+        ContentPanel.add(dashboardPanel);
+        dashboardPanel.setVisible(true);       
+        
     }
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel2 = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        LeftPanel = new javax.swing.JPanel();
+        pnlLoggedInfo = new RoundedPanel(30,new Color(255,255,255));
+        lblIcon = new javax.swing.JLabel();
+        lblUsername = new javax.swing.JLabel();
+        lblAccessLevel = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        btnAdmin = new javax.swing.JButton();
+        btnDashboard = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        Header = new javax.swing.JPanel();
+        lblHeader = new javax.swing.JLabel();
+        ContentPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(255, 255, 255));
+        setMinimumSize(new java.awt.Dimension(1280, 780));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel2.setBackground(new java.awt.Color(23, 35, 51));
+        LeftPanel.setBackground(new java.awt.Color(23, 35, 51));
+        LeftPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 280, Short.MAX_VALUE)
+        lblUsername.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblUsername.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblUsername.setText("jLabel1");
+
+        lblAccessLevel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lblAccessLevel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblAccessLevel.setText("jLabel1");
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Logged in as:");
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Access Level:");
+
+        javax.swing.GroupLayout pnlLoggedInfoLayout = new javax.swing.GroupLayout(pnlLoggedInfo);
+        pnlLoggedInfo.setLayout(pnlLoggedInfoLayout);
+        pnlLoggedInfoLayout.setHorizontalGroup(
+            pnlLoggedInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlLoggedInfoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblIcon, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(pnlLoggedInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblUsername, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblAccessLevel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1090, Short.MAX_VALUE)
+        pnlLoggedInfoLayout.setVerticalGroup(
+            pnlLoggedInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlLoggedInfoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlLoggedInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlLoggedInfoLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblUsername)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblAccessLevel)
+                        .addGap(0, 14, Short.MAX_VALUE))
+                    .addComponent(lblIcon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 280, 1090));
+        pnlLoggedInfo.setBackground(new Color(23,35,51));
+        pnlLoggedInfo.setOpaque(false);
 
-        jPanel1.setBackground(new java.awt.Color(71, 120, 197));
-        jPanel1.setAlignmentX(0.0F);
-        jPanel1.setAlignmentY(0.0F);
+        LeftPanel.add(pnlLoggedInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(12, 13, 260, 140));
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        jPanel3.setBackground(new java.awt.Color(71, 120, 197));
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 0, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 70, Short.MAX_VALUE)
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 0, 1000, 70));
+        LeftPanel.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 160, 280, 10));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+        btnAdmin.setText("Administrative");
+        LeftPanel.add(btnAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 680, 260, 70));
+
+        btnDashboard.setText("Dashboard");
+        btnDashboard.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnDashboardMouseClicked(evt);
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        });
+        LeftPanel.add(btnDashboard, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 260, 70));
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 90, 960, 610));
+        jButton2.setText("jButton1");
+        LeftPanel.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 440, 260, 70));
+
+        jButton3.setText("jButton1");
+        LeftPanel.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, 260, 70));
+
+        jButton4.setText("jButton1");
+        LeftPanel.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 360, 260, 70));
+
+        getContentPane().add(LeftPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 780));
+
+        Header.setBackground(new java.awt.Color(71, 120, 197));
+        Header.setAlignmentX(0.0F);
+        Header.setAlignmentY(0.0F);
+
+        lblHeader.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+        lblHeader.setForeground(new java.awt.Color(255, 255, 255));
+        lblHeader.setText("Dashboard");
+
+        javax.swing.GroupLayout HeaderLayout = new javax.swing.GroupLayout(Header);
+        Header.setLayout(HeaderLayout);
+        HeaderLayout.setHorizontalGroup(
+            HeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HeaderLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblHeader, javax.swing.GroupLayout.DEFAULT_SIZE, 976, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        HeaderLayout.setVerticalGroup(
+            HeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(HeaderLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblHeader, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(572, 572, 572))
+        );
+
+        getContentPane().add(Header, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 0, 1000, 70));
+
+        ContentPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout ContentPanelLayout = new javax.swing.GroupLayout(ContentPanel);
+        ContentPanel.setLayout(ContentPanelLayout);
+        ContentPanelLayout.setHorizontalGroup(
+            ContentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1000, Short.MAX_VALUE)
+        );
+        ContentPanelLayout.setVerticalGroup(
+            ContentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 710, Short.MAX_VALUE)
+        );
+
+        getContentPane().add(ContentPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 70, 1000, 710));
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
+    private void btnDashboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDashboardMouseClicked
+        DashboardPanel dashboardPanel= new DashboardPanel();
+        dashboardPanel.setSize(970,670);
+        dashboardPanel.setLocation(15, 15);
+        ContentPanel.add(dashboardPanel);
+        dashboardPanel.setVisible(true);      
+        
+    }//GEN-LAST:event_btnDashboardMouseClicked
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -109,9 +246,21 @@ public class MainWindow extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JPanel ContentPanel;
+    private javax.swing.JPanel Header;
+    private javax.swing.JPanel LeftPanel;
+    private javax.swing.JButton btnAdmin;
+    private javax.swing.JButton btnDashboard;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel lblAccessLevel;
+    private javax.swing.JLabel lblHeader;
+    private javax.swing.JLabel lblIcon;
+    private javax.swing.JLabel lblUsername;
+    private javax.swing.JPanel pnlLoggedInfo;
     // End of variables declaration//GEN-END:variables
 }

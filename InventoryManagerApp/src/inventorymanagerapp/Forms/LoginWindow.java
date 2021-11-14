@@ -1,11 +1,10 @@
 package inventorymanagerapp.Forms;
 
 import inventorymanagerapp.others.DatabaseManager;
+import inventorymanagerapp.others.ImageEditor;
 import inventorymanagerapp.others.PasswordManager;
-import java.awt.Image;
+import java.awt.event.KeyEvent;
 import java.sql.*;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
@@ -14,35 +13,92 @@ import javax.swing.UIManager;
  */
 public class LoginWindow extends javax.swing.JFrame {
 
-    public String loggerUsername = "";
-    public String loggerAccessLevel = "";
+    public static String loggerUsername = "";
+    public static String loggerAccessLevel = "";
+    private int startedCount = 0;
 
     public LoginWindow() {
         initComponents();
-        ScaleImage();
+        ImageEditor.ScaleImage(lblIcon, "User_Icon.png");
         FillFromUserCredents();
-    }
-
-    private void ScaleImage() {
-        ImageIcon MyLoginPageIcon = new ImageIcon(new ImageIcon("./src/inventorymanagerapp/images/LoginPage_User_ICon.png").getImage().getScaledInstance(150, 150, Image.SCALE_DEFAULT));
-        lblIcon.setIcon(MyLoginPageIcon);
     }
 
     private void FillFromUserCredents() {
 
         try {
-            Connection connection = DatabaseManager.getConnection();
-            PreparedStatement getCredents = connection.prepareStatement("SELECT * FROM usercredents");
-            ResultSet resultSet = getCredents.executeQuery();
+            try (Connection connection = DatabaseManager.getConnection()) {
+                PreparedStatement getCredents = connection.prepareStatement("SELECT * FROM usercredents");
+                ResultSet resultSet = getCredents.executeQuery();
 
-            if (resultSet.next()) {
-                TxtBxUsername.setText(resultSet.getString("Username")); //Getting Saved Username
-                TxtBxPassword.setText(resultSet.getString("Password")); //Getting Saved Password
+                if (resultSet.next()) {
+                    TxtBxUsername.setText(resultSet.getString("Username")); //Getting Saved Username
+                    TxtBxPassword.setText(resultSet.getString("Password")); //Getting Saved Password
+                }
             }
-
-            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void userLogger() {
+
+        PromptDialog promptDialog;
+        String username = "", password = "";
+
+        if (TxtBxPassword.getText().equals("") || TxtBxUsername.getText().equals("")) {
+            promptDialog = new PromptDialog("Error", "Missing Username or Password");
+            promptDialog.setResizable(false);
+            promptDialog.setDefaultCloseOperation(PromptDialog.DISPOSE_ON_CLOSE);
+            promptDialog.setVisible(true);
+        } else {
+            username = TxtBxUsername.getText();
+            password = TxtBxPassword.getText();
+
+            try {
+                Connection conn = DatabaseManager.getConnection();
+                String sql = "SELECT * FROM users WHERE username = ? ";
+                PreparedStatement ps = conn.prepareStatement(sql);
+
+                ps.setString(1, username);
+                ResultSet rs = ps.executeQuery();
+
+                if (rs.next()) {
+                    String storedPassword = rs.getString("Password");
+                    String salt = storedPassword.substring(0, 10);
+
+                    if (PasswordManager.isValidPassword(password, salt, storedPassword)) {
+                        loggerUsername = rs.getString("Username");
+                        loggerAccessLevel = rs.getString("AccessLevel");
+
+                        if (ChkBxSaveCredents.isSelected()) {
+                            PreparedStatement delPrevCredents = conn.prepareStatement("DELETE FROM usercredents");
+                            delPrevCredents.executeUpdate();
+
+                            PreparedStatement saveCredents = conn.prepareStatement("INSERT INTO usercredents VALUES ('" + username + "'," + "'" + password + "')");
+                            saveCredents.executeUpdate();
+                        }
+
+                        MainWindow mainWindow = new MainWindow();
+                        mainWindow.setResizable(false);
+                        mainWindow.setDefaultCloseOperation(PromptDialog.DISPOSE_ON_CLOSE);
+                        mainWindow.setVisible(true);
+                        this.dispose();
+                    } else {
+                        promptDialog = new PromptDialog("Error", "Wrong Username Or Password!");
+                        promptDialog.setResizable(false);
+                        promptDialog.setDefaultCloseOperation(PromptDialog.DISPOSE_ON_CLOSE);
+                        promptDialog.setVisible(true);
+                    }
+                } else {
+                    promptDialog = new PromptDialog("Error", "Wrong Username Or Password!");
+                    promptDialog.setResizable(false);
+                    promptDialog.setDefaultCloseOperation(PromptDialog.DISPOSE_ON_CLOSE);
+                    promptDialog.setVisible(true);
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -68,6 +124,11 @@ public class LoginWindow extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(71, 120, 197));
         setName("LoginFrame"); // NOI18N
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(23, 35, 51));
@@ -108,6 +169,11 @@ public class LoginWindow extends javax.swing.JFrame {
         jLabel2.setToolTipText("");
 
         TxtBxPassword.setText("jPasswordField1");
+        TxtBxPassword.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                TxtBxPasswordKeyPressed(evt);
+            }
+        });
 
         BtnLogin.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         BtnLogin.setText("Login");
@@ -236,57 +302,31 @@ public class LoginWindow extends javax.swing.JFrame {
     private void BtnClearMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BtnClearMouseClicked
         TxtBxUsername.setText("");
         TxtBxPassword.setText("");
+        startedCount++;
+        chkBxPasswordMask.setEnabled(true);
     }//GEN-LAST:event_BtnClearMouseClicked
 
     private void BtnLoginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BtnLoginMouseClicked
-        String username = TxtBxUsername.getText(), password = TxtBxPassword.getText();
+        userLogger();
+    }//GEN-LAST:event_BtnLoginMouseClicked
 
-        try {
-            Connection conn = DatabaseManager.getConnection();
-            String sql = "SELECT * FROM users WHERE username = ? ";
-            PreparedStatement ps = conn.prepareStatement(sql);
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        chkBxPasswordMask.setEnabled(false);
+    }//GEN-LAST:event_formWindowOpened
 
-            ps.setString(1, username);
+    private void TxtBxPasswordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_TxtBxPasswordKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+            if (TxtBxPassword.getText().equals("") && startedCount == 0) {
+                startedCount++;
 
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                String storedPassword = rs.getString("Password");
-                String salt = storedPassword.substring(0, 10);
-
-                if (PasswordManager.isValidPassword(password, salt, storedPassword)) {
-                    System.out.println("sikeres bejelentkezés");
-                    loggerUsername = rs.getString("Username");
-                    loggerAccessLevel = rs.getString("AccessLevel");
-                    System.out.println(loggerUsername + " " + loggerAccessLevel);
-
-                    if (ChkBxSaveCredents.isSelected()) {
-                        PreparedStatement delPrevCredents = conn.prepareStatement("DELETE FROM usercredents");
-                        delPrevCredents.executeUpdate();
-
-                        PreparedStatement saveCredents = conn.prepareStatement("INSERT INTO usercredents VALUES ('" + username + "'," + "'" + password + "')");
-                        saveCredents.executeUpdate();
-                    }
-
-                    MainWindow mainWindow = new MainWindow();
-                    mainWindow.setResizable(false);
-                    mainWindow.setDefaultCloseOperation(PromptDialog.DISPOSE_ON_CLOSE);
-                    mainWindow.setVisible(true);
-                    this.dispose();
-                } else {
-                    //JOptionPane.showMessageDialog(this, "Wrong Username or Password", "Error", JOptionPane.ERROR_MESSAGE);
-                    PromptDialog promptDialog = new PromptDialog("Error", "Wrong Username Or Password!");
-                    promptDialog.setResizable(false);
-                    promptDialog.setDefaultCloseOperation(PromptDialog.DISPOSE_ON_CLOSE);
-                    promptDialog.setVisible(true);
+                if (startedCount != 0) {
+                    chkBxPasswordMask.setEnabled(true);
                 }
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } else if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            userLogger();
         }
-
-
-    }//GEN-LAST:event_BtnLoginMouseClicked
+    }//GEN-LAST:event_TxtBxPasswordKeyPressed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
