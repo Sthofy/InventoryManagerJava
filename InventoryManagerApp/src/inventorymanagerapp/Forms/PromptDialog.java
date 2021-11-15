@@ -1,5 +1,7 @@
 package inventorymanagerapp.Forms;
 
+import java.awt.event.KeyEvent;
+
 /**
  *
  * @author Suhajda Kristóf - IMVC5O
@@ -34,6 +36,11 @@ public class PromptDialog extends javax.swing.JFrame {
         setAlwaysOnTop(true);
         setLocationByPlatform(true);
         setName("PromptDialog"); // NOI18N
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setBackground(new java.awt.Color(71, 120, 197));
@@ -43,9 +50,6 @@ public class PromptDialog extends javax.swing.JFrame {
         lblError.setText("jLabel1");
 
         lblClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/inventorymanagerapp/images/x-button.png"))); // NOI18N
-        lblClose.setMaximumSize(new java.awt.Dimension(45, 45));
-        lblClose.setMinimumSize(new java.awt.Dimension(45, 45));
-        lblClose.setPreferredSize(new java.awt.Dimension(45, 45));
         lblClose.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lblCloseMouseClicked(evt);
@@ -62,7 +66,7 @@ public class PromptDialog extends javax.swing.JFrame {
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(179, Short.MAX_VALUE)
-                .addComponent(lblClose, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblClose)
                 .addGap(176, 176, 176))
         );
         jPanel1Layout.setVerticalGroup(
@@ -71,7 +75,7 @@ public class PromptDialog extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(lblError, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(lblClose, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblClose)
                 .addContainerGap())
         );
 
@@ -110,6 +114,11 @@ public class PromptDialog extends javax.swing.JFrame {
     private void lblCloseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCloseMouseClicked
         this.dispose();
     }//GEN-LAST:event_lblCloseMouseClicked
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        if(evt.getKeyChar()==KeyEvent.VK_ENTER || evt.getKeyCode()==KeyEvent.VK_ESCAPE)
+            this.dispose();
+    }//GEN-LAST:event_formKeyPressed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
