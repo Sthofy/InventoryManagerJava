@@ -168,7 +168,6 @@ public class LoginWindow extends javax.swing.JFrame {
         jLabel2.setText("Password:");
         jLabel2.setToolTipText("");
 
-        TxtBxPassword.setText("jPasswordField1");
         TxtBxPassword.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 TxtBxPasswordKeyPressed(evt);

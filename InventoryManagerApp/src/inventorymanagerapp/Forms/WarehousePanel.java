@@ -1,10 +1,10 @@
 package inventorymanagerapp.Forms;
 
 import inventorymanagerapp.others.DatabaseManager;
-import inventorymanagerapp.others.Items;
 import java.sql.*;
 import java.util.*;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.RowFilter;
 import javax.swing.table.*;
 
@@ -14,14 +14,15 @@ import javax.swing.table.*;
  */
 public class WarehousePanel extends java.awt.Panel {
 
-    private final ArrayList<Items> itemList = new ArrayList<>();
+    private TableRowSorter<TableModel> rowSorter;
 
     public WarehousePanel() {
         initComponents();
         setTable();
         setComboBox();
+        getOutOfStock();
+        getLowStock();
     }
-    private TableRowSorter<TableModel> rowSorter;
 
     private void setTable() {
         Connection conn = DatabaseManager.getConnection();
@@ -29,7 +30,7 @@ public class WarehousePanel extends java.awt.Panel {
         model.getDataVector().removeAllElements();
         model.fireTableDataChanged();
 
-        rowSorter = new TableRowSorter<TableModel>(tblItems.getModel());
+        rowSorter = new TableRowSorter<>(tblItems.getModel());
         tblItems.setRowSorter(rowSorter);
 
         try {
@@ -37,12 +38,6 @@ public class WarehousePanel extends java.awt.Panel {
             ResultSet rs = getItems.executeQuery();
 
             while (rs.next()) {
-                Items item = new Items(rs.getInt("ItemID"),
-                        rs.getString("Itemname"),
-                        rs.getInt("Stock"),
-                        rs.getDouble("Price"),
-                        rs.getString("ITEMTYPE_ItemTypeID"));
-                rs.getString(1);
 
                 Vector row = new Vector();
                 row.add(rs.getInt("ItemID"));
@@ -53,7 +48,6 @@ public class WarehousePanel extends java.awt.Panel {
                 model.addRow(row);
 
                 tblItems.setModel(model);
-                itemList.add(item);
             }
             conn.close();
         } catch (SQLException e) {
@@ -62,8 +56,8 @@ public class WarehousePanel extends java.awt.Panel {
     }
 
     private void setComboBox() {
-        try {
-            Connection conn = DatabaseManager.getConnection();
+        Connection conn = DatabaseManager.getConnection();
+        try {         
             PreparedStatement getItemTypeNames = conn.prepareStatement("SELECT ItemTypeName FROM itemtype");
             ResultSet rs = getItemTypeNames.executeQuery();
 
@@ -124,21 +118,20 @@ public class WarehousePanel extends java.awt.Panel {
     private void updateItem() {
         Connection conn = DatabaseManager.getConnection();
         String updatedName = "";
-        Integer tempTypeID = 0, tempItemID = 0, updatedItemType = 0, updatedStock = 0;
+        Integer tempTypeID = 0,updatedItemType = 0, updatedStock = 0;
         double updatedPrice = 0.0;
 
         try {
-            PreparedStatement getItem = conn.prepareStatement("SELECT * FROM items WHERE ItemName=?");
-            getItem.setString(1, txtBxUpdate.getText());
+            PreparedStatement getItem = conn.prepareStatement("SELECT * FROM items WHERE ItemID=?");
+            getItem.setInt(1, Integer.valueOf(txtBxUpdate.getText()));
             ResultSet rsGetItem = getItem.executeQuery();
             while (rsGetItem.next()) {
-                tempItemID = rsGetItem.getInt("ItemID");
                 tempTypeID = rsGetItem.getInt("ITEMTYPE_ItemTypeID");
 
                 PreparedStatement getItemType = conn.prepareStatement("SELECT * FROM itemtype WHERE ItemTypeID=" + tempTypeID);
                 ResultSet rsGetItemType = getItemType.executeQuery();
 
-                if (!txtBxUpdate.getText().isEmpty() && !txtBxUpdate.getText().equals("Enter Item Name")) {
+                if (!txtBxUpdate.getText().isEmpty() && !txtBxUpdate.getText().equals("Enter Item ID")) {
                     if (rsGetItem == null) {
                         System.out.println("Nincs elem");
                     }
@@ -181,7 +174,8 @@ public class WarehousePanel extends java.awt.Panel {
                     promptDialog.setVisible(true);
                 }
             }
-            PreparedStatement updateItem = conn.prepareStatement("UPDATE items SET ItemName=?, Stock=?, Price=?, ITEMTYPE_ItemTypeID=? WHERE ItemID=" + tempItemID);
+            PreparedStatement updateItem = conn.prepareStatement("UPDATE items SET ItemName=?, Stock=?, Price=?, ITEMTYPE_ItemTypeID=? WHERE ItemID=?");
+            updateItem.setInt(5,Integer.valueOf(txtBxUpdate.getText()));
             updateItem.setString(1, updatedName);
             updateItem.setInt(2, updatedStock);
             updateItem.setDouble(3, updatedPrice);
@@ -192,7 +186,7 @@ public class WarehousePanel extends java.awt.Panel {
             promptDialog.setResizable(false);
             promptDialog.setDefaultCloseOperation(PromptDialog.DISPOSE_ON_CLOSE);
             promptDialog.setVisible(true);
-            
+
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -236,12 +230,49 @@ public class WarehousePanel extends java.awt.Panel {
 
     private void Filter() {
         String text = txtBxFilter.getText();
-        rowSorter = new TableRowSorter<TableModel>(tblItems.getModel());
+        rowSorter = new TableRowSorter<>(tblItems.getModel());
         tblItems.setRowSorter(rowSorter);
         if (text.trim().length() == 0) {
             rowSorter.setRowFilter(null);
         } else {
             rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + text));
+        }
+    }
+
+    private void getOutOfStock() {
+        Connection conn = DatabaseManager.getConnection();
+        int i = 0;
+        try {
+            PreparedStatement getOutStock = conn.prepareStatement("SELECT ItemName FROM items WHERE Stock=" + 0);
+            ResultSet getOutStockRs = getOutStock.executeQuery();
+            i = 0;
+            DefaultListModel model = new DefaultListModel();
+            while (getOutStockRs.next()) {
+                model.add(i, getOutStockRs.getString(1));
+                i++;
+            }
+            lstOutStock.setModel(model);
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getLowStock() {
+        Connection conn = DatabaseManager.getConnection();
+        int i = 0;
+        try {
+            PreparedStatement getLowStock = conn.prepareStatement("SELECT ItemName FROM items WHERE Stock BETWEEN " + 1 + " AND " + 5);
+            ResultSet getLowStockRs = getLowStock.executeQuery();
+            DefaultListModel model = new DefaultListModel();
+            while (getLowStockRs.next()) {
+                model.add(i, getLowStockRs.getString(1));
+                i++;
+            }
+            lstLowStock.setModel(model);
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -279,6 +310,18 @@ public class WarehousePanel extends java.awt.Panel {
         txtBxPriceUpdate = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        lstOutStock = new javax.swing.JList<>();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        lstLowStock = new javax.swing.JList<>();
 
         setBackground(new java.awt.Color(204, 204, 204));
         setMinimumSize(new java.awt.Dimension(970, 670));
@@ -286,6 +329,7 @@ public class WarehousePanel extends java.awt.Panel {
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         tblItems.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        tblItems.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tblItems.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -358,17 +402,17 @@ public class WarehousePanel extends java.awt.Panel {
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        cmbBxItemTypesAdd.setMaximumRowCount(20);
+        cmbBxItemTypesAdd.setMaximumRowCount(10);
         cmbBxItemTypesAdd.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jPanel1.add(cmbBxItemTypesAdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 80, 130, -1));
+        jPanel1.add(cmbBxItemTypesAdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 190, 130, -1));
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setText("Add/Delete/Update Item");
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 450, 30));
-        jPanel1.add(txtBxPriceAdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 140, 150, -1));
-        jPanel1.add(txtBxNameAdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 50, 150, -1));
-        jPanel1.add(txtBxStockAdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 110, 150, -1));
+        jPanel1.add(txtBxPriceAdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 160, 150, -1));
+        jPanel1.add(txtBxNameAdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 100, 150, -1));
+        jPanel1.add(txtBxStockAdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 130, 150, -1));
 
         btnAdd.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnAdd.setText("Add Item");
@@ -377,7 +421,7 @@ public class WarehousePanel extends java.awt.Panel {
                 btnAddMouseClicked(evt);
             }
         });
-        jPanel1.add(btnAdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 170, 110, 30));
+        jPanel1.add(btnAdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 220, 110, 30));
 
         btnUpdate.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnUpdate.setText("Update");
@@ -386,7 +430,7 @@ public class WarehousePanel extends java.awt.Panel {
                 btnUpdateMouseClicked(evt);
             }
         });
-        jPanel1.add(btnUpdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 170, 90, 30));
+        jPanel1.add(btnUpdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 220, 90, 30));
 
         btnDelete.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnDelete.setText("Delete");
@@ -410,21 +454,21 @@ public class WarehousePanel extends java.awt.Panel {
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel8.setText("Name:");
-        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, 50, -1));
+        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 100, 50, -1));
 
         jLabel9.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel9.setText("Category:");
-        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, 70, -1));
+        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 190, 70, -1));
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel10.setText("Stock:");
-        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 110, 50, 20));
+        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 130, 50, 20));
 
         jLabel11.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel11.setText("Price:");
-        jPanel1.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 40, -1));
+        jPanel1.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, 40, -1));
 
-        txtBxUpdate.setText("Enter Item Name");
+        txtBxUpdate.setText("Enter Item ID");
         txtBxUpdate.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtBxUpdateFocusGained(evt);
@@ -433,30 +477,33 @@ public class WarehousePanel extends java.awt.Panel {
                 txtBxUpdateFocusLost(evt);
             }
         });
-        jPanel1.add(txtBxUpdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 170, 110, 30));
+        jPanel1.add(txtBxUpdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 220, 110, 30));
 
         jLabel12.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel12.setText("Name:");
-        jPanel1.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 50, 50, -1));
-        jPanel1.add(txtBxNameUpdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 50, 150, -1));
+        jPanel1.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 100, 50, -1));
+        jPanel1.add(txtBxNameUpdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 100, 150, -1));
 
         jLabel13.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel13.setText("Category:");
-        jPanel1.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 80, 70, -1));
+        jPanel1.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 190, 70, -1));
 
-        cmbBxItemTypesUpdate.setMaximumRowCount(20);
+        cmbBxItemTypesUpdate.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cmbBxItemTypesUpdate.setMaximumRowCount(10);
         cmbBxItemTypesUpdate.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        jPanel1.add(cmbBxItemTypesUpdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 80, 130, -1));
+        cmbBxItemTypesUpdate.setDoubleBuffered(true);
+        jPanel1.add(cmbBxItemTypesUpdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 190, 130, -1));
+        cmbBxItemTypesUpdate.setVisible(true);
 
         jLabel14.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel14.setText("Stock:");
-        jPanel1.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 110, 50, 20));
-        jPanel1.add(txtBxStockUpdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 110, 150, -1));
+        jPanel1.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 130, 50, 20));
+        jPanel1.add(txtBxStockUpdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 130, 150, -1));
 
         jLabel15.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel15.setText("Price:");
-        jPanel1.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 140, 40, -1));
-        jPanel1.add(txtBxPriceUpdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 140, 150, -1));
+        jPanel1.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 160, 40, -1));
+        jPanel1.add(txtBxPriceUpdate, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 160, 150, -1));
 
         add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 330, 455, 330));
 
@@ -466,6 +513,88 @@ public class WarehousePanel extends java.awt.Panel {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("Out of Stock/Low Stock");
         jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 450, 30));
+
+        lstOutStock.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lstOutStock.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane2.setViewportView(lstOutStock);
+
+        jPanel2.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 200, 110));
+
+        jButton1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jButton1.setText("Change Selected");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
+        jPanel2.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 140, 190, -1));
+
+        jButton2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jButton2.setText("Delete Selected");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton2MouseClicked(evt);
+            }
+        });
+        jPanel2.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 60, 190, -1));
+
+        jButton3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jButton3.setText("Add Stock To Selected");
+        jButton3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton3MouseClicked(evt);
+            }
+        });
+        jPanel2.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 100, 190, -1));
+
+        jButton4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jButton4.setText("Change Price");
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton4MouseClicked(evt);
+            }
+        });
+        jPanel2.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 210, 190, -1));
+
+        jButton5.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jButton5.setText("Add Stock To Selected");
+        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton5MouseClicked(evt);
+            }
+        });
+        jPanel2.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 250, 190, -1));
+
+        jButton6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jButton6.setText("Change Selected");
+        jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton6MouseClicked(evt);
+            }
+        });
+        jPanel2.add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 290, 190, -1));
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel4.setText("Out of Stock");
+        jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, -1, -1));
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel5.setText("Low Stock");
+        jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, -1, -1));
+
+        lstLowStock.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lstLowStock.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane3.setViewportView(lstLowStock);
+
+        jPanel2.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, 200, 110));
 
         add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(495, 330, 455, 330));
     }// </editor-fold>//GEN-END:initComponents
@@ -508,12 +637,12 @@ public class WarehousePanel extends java.awt.Panel {
 
     private void txtBxUpdateFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtBxUpdateFocusLost
         if (txtBxUpdate.getText().equals("")) {
-            txtBxUpdate.setText("Enter Item Name");
+            txtBxUpdate.setText("Enter Item ID");
         }
     }//GEN-LAST:event_txtBxUpdateFocusLost
 
     private void txtBxUpdateFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtBxUpdateFocusGained
-        if (txtBxUpdate.getText().equals("Enter Item Name")) {
+        if (txtBxUpdate.getText().equals("Enter Item ID")) {
             txtBxUpdate.setText("");
         }
     }//GEN-LAST:event_txtBxUpdateFocusGained
@@ -532,12 +661,102 @@ public class WarehousePanel extends java.awt.Panel {
 
         String selectedItems = elementAt.toString().substring(1, elementAt.toString().length() - 1);
         String[] items = selectedItems.split(", ");
-        txtBxUpdate.setText(items[1]);
+        txtBxUpdate.setText(items[0]);
         txtBxNameUpdate.setText(items[1]);
         cmbBxItemTypesUpdate.setSelectedItem(items[2]);
         txtBxStockUpdate.setText(items[3]);
         txtBxPriceUpdate.setText(items[4]);
     }//GEN-LAST:event_tblItemsMouseClicked
+
+    private void jButton3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton3MouseClicked
+        Connection conn = DatabaseManager.getConnection();
+        try {
+            PreparedStatement getItemData = conn.prepareStatement("SELECT * FROM items WHERE ItemName=?");
+            getItemData.setString(1, lstOutStock.getSelectedValue());
+            ResultSet rs = getItemData.executeQuery();
+
+            while (rs.next()) {
+                txtBxUpdate.setText(rs.getString("ItemName"));
+                txtBxNameUpdate.setText(rs.getString("ItemName"));
+                txtBxPriceUpdate.setText(rs.getString("Price"));
+                cmbBxItemTypesUpdate.setSelectedIndex(rs.getInt("ITEMTYPE_ItemTypeID"));
+            }
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        txtBxStockUpdate.grabFocus();
+    }//GEN-LAST:event_jButton3MouseClicked
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        txtBxNameUpdate.grabFocus();
+        txtBxUpdate.setText(lstOutStock.getSelectedValue());
+    }//GEN-LAST:event_jButton1MouseClicked
+
+    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+        Connection conn = DatabaseManager.getConnection();
+        try {
+            PreparedStatement deleteItem = conn.prepareCall("DELETE FROM items WHERE ItemName=?");
+            deleteItem.setString(1, lstOutStock.getSelectedValue());
+            deleteItem.executeUpdate();
+
+            PromptDialog promptDialog = new PromptDialog("Operation successful", "Item Deleted");
+            promptDialog.setResizable(false);
+            promptDialog.setDefaultCloseOperation(PromptDialog.DISPOSE_ON_CLOSE);
+            promptDialog.setVisible(true);
+
+            conn.close();
+            setTable();
+            getOutOfStock();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jButton2MouseClicked
+
+    private void jButton6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton6MouseClicked
+        txtBxNameUpdate.grabFocus();
+        txtBxUpdate.setText(lstLowStock.getSelectedValue());
+    }//GEN-LAST:event_jButton6MouseClicked
+
+    private void jButton4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton4MouseClicked
+        Connection conn = DatabaseManager.getConnection();
+        try {
+            PreparedStatement getItemData = conn.prepareStatement("SELECT * FROM items WHERE ItemName=?");
+            getItemData.setString(1, lstLowStock.getSelectedValue());
+            ResultSet rs = getItemData.executeQuery();
+
+            while (rs.next()) {
+                txtBxUpdate.setText(rs.getString("ItemName"));
+                txtBxNameUpdate.setText(rs.getString("ItemName"));
+                txtBxStockUpdate.setText(rs.getString("Stock"));
+                cmbBxItemTypesUpdate.setSelectedIndex(rs.getInt("ITEMTYPE_ItemTypeID"));
+            }
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        txtBxPriceUpdate.grabFocus();
+    }//GEN-LAST:event_jButton4MouseClicked
+
+    private void jButton5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton5MouseClicked
+        Connection conn = DatabaseManager.getConnection();
+        try {
+            PreparedStatement getItemData = conn.prepareStatement("SELECT * FROM items WHERE ItemName=?");
+            getItemData.setString(1, lstLowStock.getSelectedValue());
+            ResultSet rs = getItemData.executeQuery();
+
+            while (rs.next()) {
+                txtBxUpdate.setText(rs.getString("ItemName"));
+                txtBxNameUpdate.setText(rs.getString("ItemName"));
+                txtBxPriceUpdate.setText(rs.getString("Price"));
+                cmbBxItemTypesUpdate.setSelectedIndex(rs.getInt("ITEMTYPE_ItemTypeID"));
+            }
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        txtBxStockUpdate.grabFocus();
+    }//GEN-LAST:event_jButton5MouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -547,6 +766,12 @@ public class WarehousePanel extends java.awt.Panel {
     private javax.swing.JButton btnUpdate;
     private javax.swing.JComboBox<String> cmbBxItemTypesAdd;
     private javax.swing.JComboBox<String> cmbBxItemTypesUpdate;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -556,11 +781,17 @@ public class WarehousePanel extends java.awt.Panel {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JList<String> lstLowStock;
+    private javax.swing.JList<String> lstOutStock;
     private javax.swing.JTable tblItems;
     private javax.swing.JTextField txtBxDelete;
     private javax.swing.JTextField txtBxFilter;

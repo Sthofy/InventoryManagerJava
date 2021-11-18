@@ -23,7 +23,7 @@ public class DashboardPanel extends java.awt.Panel {
     private void getOutOfStock() {
         Connection conn = DatabaseManager.getConnection();
         try {
-            PreparedStatement getOutStock = conn.prepareStatement("SELECT ItemName FROM items,itemtype WHERE ItemTypeID=ITEMTYPE_ItemTypeID AND Stock=" + 0);
+            PreparedStatement getOutStock = conn.prepareStatement("SELECT ItemName FROM items WHERE Stock=" + 0);
             ResultSet getOutStockRs = getOutStock.executeQuery();
             i = 0;
             DefaultListModel model = new DefaultListModel();
@@ -43,7 +43,7 @@ public class DashboardPanel extends java.awt.Panel {
     private void getLowStock() {
         Connection conn = DatabaseManager.getConnection();
         try {
-            PreparedStatement getLowStock = conn.prepareStatement("SELECT ItemName FROM items,itemtype WHERE ItemTypeID=ITEMTYPE_ItemTypeID AND Stock BETWEEN " + 1 + " AND " + 5);
+            PreparedStatement getLowStock = conn.prepareStatement("SELECT ItemName FROM items WHERE Stock BETWEEN " + 1 + " AND " + 5);
             ResultSet getLowStockRs = getLowStock.executeQuery();
             i = 0;
             DefaultListModel model = new DefaultListModel();

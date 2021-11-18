@@ -10,8 +10,6 @@ import java.awt.*;
  */
 public class MainWindow extends javax.swing.JFrame {
 
-    private Object prevPanel;
-
     public MainWindow() {
         initComponents();
         firstOpened();
@@ -37,7 +35,6 @@ public class MainWindow extends javax.swing.JFrame {
         dashboardPanel.setLocation(15, 15);
         ContentPanel.add(dashboardPanel);
         dashboardPanel.setVisible(true);
-        prevPanel = dashboardPanel;
     }
 
     @SuppressWarnings("unchecked")
@@ -56,7 +53,7 @@ public class MainWindow extends javax.swing.JFrame {
         btnDashboard = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         btnWarehouse = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        btnAccounts = new javax.swing.JButton();
         Header = new javax.swing.JPanel();
         lblHeader = new javax.swing.JLabel();
         ContentPanel = new javax.swing.JPanel();
@@ -141,6 +138,7 @@ public class MainWindow extends javax.swing.JFrame {
         btnAdmin.setText("Administrative");
         LeftPanel.add(btnAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 680, 260, 70));
 
+        btnDashboard.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnDashboard.setText("Dashboard");
         btnDashboard.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -152,7 +150,7 @@ public class MainWindow extends javax.swing.JFrame {
         jButton2.setText("jButton1");
         LeftPanel.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 440, 260, 70));
 
-        btnWarehouse.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
+        btnWarehouse.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnWarehouse.setText("Warehouse");
         btnWarehouse.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -161,8 +159,14 @@ public class MainWindow extends javax.swing.JFrame {
         });
         LeftPanel.add(btnWarehouse, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 280, 260, 70));
 
-        jButton4.setText("jButton1");
-        LeftPanel.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 360, 260, 70));
+        btnAccounts.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        btnAccounts.setText("Purchases");
+        btnAccounts.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnAccountsMouseClicked(evt);
+            }
+        });
+        LeftPanel.add(btnAccounts, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 360, 260, 70));
 
         getContentPane().add(LeftPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 780));
 
@@ -213,6 +217,7 @@ public class MainWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDashboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDashboardMouseClicked
+        lblHeader.setText("Dashboard");
         ContentPanel.removeAll();
         DashboardPanel dashboardPanel = new DashboardPanel();
         dashboardPanel.setSize(970, 670);
@@ -224,6 +229,7 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_btnDashboardMouseClicked
 
     private void btnWarehouseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnWarehouseMouseClicked
+        lblHeader.setText("Warehouse");
         ContentPanel.removeAll();
         WarehousePanel warehousePanel = new WarehousePanel();
         warehousePanel.setSize(970, 670);
@@ -232,6 +238,17 @@ public class MainWindow extends javax.swing.JFrame {
         warehousePanel.setVisible(true);
         ContentPanel.updateUI();
     }//GEN-LAST:event_btnWarehouseMouseClicked
+
+    private void btnAccountsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAccountsMouseClicked
+        lblHeader.setText("Purchases");
+        ContentPanel.removeAll();
+        PurchasesPanel accountsPanel=new PurchasesPanel();
+        accountsPanel.setSize(970,670);
+        accountsPanel.setLocation(15, 15);
+        ContentPanel.add(accountsPanel);
+        accountsPanel.setVisible(true);
+        ContentPanel.updateUI();
+    }//GEN-LAST:event_btnAccountsMouseClicked
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -269,11 +286,11 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JPanel ContentPanel;
     private javax.swing.JPanel Header;
     private javax.swing.JPanel LeftPanel;
+    private javax.swing.JButton btnAccounts;
     private javax.swing.JButton btnAdmin;
     private javax.swing.JButton btnDashboard;
     private javax.swing.JButton btnWarehouse;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel3;
