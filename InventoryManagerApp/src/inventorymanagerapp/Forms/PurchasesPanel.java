@@ -169,47 +169,53 @@ public class PurchasesPanel extends java.awt.Panel {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         setTable();
     }
 
     private void addPurchase() {
-        String tempAccountName=newAccount();
         Connection conn = DatabaseManager.getConnection();
-        int tempItemID = 0, newAccountID = 0;
-        double tempPrice = 0.0;              
         try {
-            PreparedStatement diable=conn.prepareStatement("SET FOREIGN_KEY_CHECKS=0");
-            PreparedStatement enable=conn.prepareStatement("SET FOREIGN_KEY_CHECKS=1");
-            diable.execute();
-            PreparedStatement getNewAccountID = conn.prepareStatement("SELECT * FROM accounts WHERE AccountName=?");
-            PreparedStatement getItemID = conn.prepareStatement("SELECT ItemID,Price FROM items WHERE ItemName=?");
-            PreparedStatement setNewPruchase = conn.prepareStatement("INSERT INTO purchases (PurchaseDate,Quantity,AmountDue,ACCOUNTS_AccountID,USERS_Username,ITEMS_ItemID) VALUES(?,?,?,?,?,?)");           
+            String tempAccountName = newAccount();
 
-            getNewAccountID.setString(1, tempAccountName);
-            getItemID.setString(1, txtBxItemNameAdd.getText());
+            if (!txtBxItemNameAdd.getText().isEmpty() && !txtBxQuantityAdd.getText().isEmpty()) {
 
-            setNewPruchase.setDate(1, Date.valueOf(LocalDate.now()));
-            setNewPruchase.setInt(2, Integer.valueOf(txtBxQuantityAdd.getText()));
-            setNewPruchase.setDouble(3, tempPrice * Integer.valueOf(txtBxQuantityAdd.getText()));
-            setNewPruchase.setInt(4, newAccountID);
-            setNewPruchase.setString(5, LoginWindow.loggerUsername);
-            setNewPruchase.setInt(6, tempItemID);
+                PreparedStatement getNewAccountID = conn.prepareStatement("SELECT * FROM accounts WHERE AccountName=?");
+                PreparedStatement getItemID = conn.prepareStatement("SELECT * FROM items WHERE ItemName=?");
+                PreparedStatement setNewPruchase = conn.prepareStatement("INSERT INTO purchases (PurchaseDate,Quantity,AmountDue,ACCOUNTS_AccountID,USERS_Username,ITEMS_ItemID) VALUES(?,?,?,?,?,?)");
 
-            ResultSet rsGetItemID = getItemID.executeQuery();
-            ResultSet rsGetNewAccountID = getNewAccountID.executeQuery();
-            setNewPruchase.executeUpdate();
-            enable.execute();
+                getNewAccountID.setString(1, tempAccountName);
+                getItemID.setString(1, txtBxItemNameAdd.getText());
 
-            while (rsGetItemID.next()) {
-                tempItemID = rsGetItemID.getInt(1);
-                tempPrice = rsGetItemID.getDouble(2);
+                setNewPruchase.setDate(1, Date.valueOf(LocalDate.now()));
+                setNewPruchase.setInt(2, Integer.valueOf(txtBxQuantityAdd.getText()));
+                setNewPruchase.setString(5, LoginWindow.loggerUsername);
+
+                ResultSet rsGetItemID = getItemID.executeQuery();
+                ResultSet rsGetNewAccountID = getNewAccountID.executeQuery();
+
+                while (rsGetItemID.next()) {
+                    setNewPruchase.setInt(6, rsGetItemID.getInt("ItemID"));
+                    setNewPruchase.setDouble(3, rsGetItemID.getDouble("Price") * Double.valueOf(txtBxQuantityAdd.getText()));
+                }
+
+                while (rsGetNewAccountID.next()) {
+                    setNewPruchase.setInt(4, rsGetNewAccountID.getInt("AccountID"));
+                }
+
+                setNewPruchase.executeUpdate();
+                conn.close();
+
+                PromptDialog promptDialog = new PromptDialog("Operation Succesful", "Item Added");
+                promptDialog.setResizable(false);
+                promptDialog.setDefaultCloseOperation(PromptDialog.DISPOSE_ON_CLOSE);
+                promptDialog.setVisible(true);
+            } else {
+                PromptDialog promptDialog = new PromptDialog("Error", "Missing information");
+                promptDialog.setResizable(false);
+                promptDialog.setDefaultCloseOperation(PromptDialog.DISPOSE_ON_CLOSE);
+                promptDialog.setVisible(true);
             }
-
-            while (rsGetNewAccountID.next()) {
-                newAccountID = rsGetNewAccountID.getInt("AccountID");
-            }
-            conn.close();        
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -219,20 +225,20 @@ public class PurchasesPanel extends java.awt.Panel {
     private String newAccount() {
         Connection conn = DatabaseManager.getConnection();
         String tempAccountName = "Account_" + ThreadLocalRandom.current().nextInt(1000, 10000);
-        
+
         try {
             PreparedStatement setNewAccount = conn.prepareStatement("INSERT INTO accounts (AccountName,PayMethod,USERS_Username) VALUES (?,?,?)");
             setNewAccount.setString(1, tempAccountName);
             setNewAccount.setString(2, "Cash");
             setNewAccount.setString(3, LoginWindow.loggerUsername);
-            
+
             setNewAccount.executeUpdate();
-            
+
             conn.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return tempAccountName;
     }
 
