@@ -108,9 +108,11 @@ public class PurchasesPanel extends java.awt.Panel {
             PreparedStatement getItemID = conn.prepareStatement("SELECT * FROM items WHERE ItemName=?");
             PreparedStatement getPruchase = conn.prepareStatement("SELECT * FROM purchases WHERE PurchaseID=?");
             PreparedStatement getAccount = conn.prepareStatement("SELECT * FROM accounts WHERE AccountName=?");
+            
             getAccount.setString(1, txtBxAccountNameChange.getText());
             getPruchase.setInt(1, Integer.valueOf(txtBxIDChange.getText()));
             getItemID.setString(1, txtBxItemNameChange.getText());
+            
             ResultSet rsGetItemID = getItemID.executeQuery();
             ResultSet rsGetPruchase = getPruchase.executeQuery();
             ResultSet rsGetAccount = getAccount.executeQuery();
@@ -125,9 +127,6 @@ public class PurchasesPanel extends java.awt.Panel {
 
             while (rsGetPruchase.next()) {
                 if (!txtBxIDChange.getText().isEmpty() && !txtBxIDChange.getText().equals("Enter Item ID")) {
-                    if (rsGetPruchase == null) {
-                        System.out.println("Nincs elem");
-                    }
 
                     if (txtBxDateChange.getText().equals(rsGetPruchase.getString("PurchaseDate"))) {
                         tempDate = rsGetPruchase.getDate("PurchaseDate");

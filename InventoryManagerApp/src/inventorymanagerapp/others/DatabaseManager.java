@@ -1,5 +1,6 @@
 package inventorymanagerapp.others;
 
+import inventorymanagerapp.Forms.PromptDialog;
 import java.sql.*;
 
 /**
@@ -18,6 +19,9 @@ public class DatabaseManager {
             conn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
         } catch (SQLException e) {
             e.printStackTrace();
+            if (e.getErrorCode() == 0) { //Error Code 0: adatbázis offline
+                new PromptDialog("Error!", "Database server is offline!");
+            }
             return null;
         }
         return conn;

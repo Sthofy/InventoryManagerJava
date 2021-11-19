@@ -70,7 +70,7 @@ public class DashboardPanel extends java.awt.Panel {
         Connection conn = DatabaseManager.getConnection();
         ArrayList<String> names = new ArrayList<>();
         LocalDate date = LocalDate.now();
-        String tempName = "", tempMonth = "", tempYear = "", actualMonth = String.valueOf(date.getMonthValue()), actualYear = String.valueOf(date.getYear());
+        String tempName, tempMonth, tempYear, actualMonth = String.valueOf(date.getMonthValue()), actualYear = String.valueOf(date.getYear());
 
         try {
             PreparedStatement ps = conn.prepareStatement("SELECT * FROM purchases");

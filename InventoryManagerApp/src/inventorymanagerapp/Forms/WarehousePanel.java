@@ -132,9 +132,6 @@ public class WarehousePanel extends java.awt.Panel {
                 ResultSet rsGetItemType = getItemType.executeQuery();
 
                 if (!txtBxUpdate.getText().isEmpty() && !txtBxUpdate.getText().equals("Enter Item ID")) {
-                    if (rsGetItem == null) {
-                        System.out.println("Nincs elem");
-                    }
 
                     if (txtBxNameUpdate.getText().equals(rsGetItem.getString("ItemName"))) {
                         updatedName = rsGetItem.getString("ItemName");
@@ -245,12 +242,13 @@ public class WarehousePanel extends java.awt.Panel {
         try {
             PreparedStatement getOutStock = conn.prepareStatement("SELECT ItemName FROM items WHERE Stock=" + 0);
             ResultSet getOutStockRs = getOutStock.executeQuery();
-            i = 0;
             DefaultListModel model = new DefaultListModel();
+            
             while (getOutStockRs.next()) {
                 model.add(i, getOutStockRs.getString(1));
                 i++;
             }
+            
             lstOutStock.setModel(model);
             conn.close();
         } catch (SQLException e) {

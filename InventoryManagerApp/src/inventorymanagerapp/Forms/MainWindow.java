@@ -2,6 +2,7 @@ package inventorymanagerapp.Forms;
 
 import inventorymanagerapp.others.ImageEditor;
 import inventorymanagerapp.others.RoundedPanel;
+
 import java.awt.*;
 
 /**

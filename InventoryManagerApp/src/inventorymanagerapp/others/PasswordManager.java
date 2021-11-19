@@ -38,7 +38,6 @@ public class PasswordManager {
             e.printStackTrace();
         }
         System.out.println(salt);
-        // Teszt pw [B@2667f02b7970d700bf918528d4e872c004feaf84ff34670c595fd028c6e97adfd3fc9bb
         // Teszt pw [B@2667f02d42ccde0727a97b42f8a123084abcfa4d9655d230ec16c3baa191a7efec5e7ac
         return null;
     }

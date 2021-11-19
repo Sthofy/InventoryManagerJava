@@ -11,8 +11,8 @@ import javax.swing.JLabel;
 public class ImageEditor {
 
     public static void ScaleImage(JLabel panel,String imageName) {
-        ImageIcon MyLoginPageIcon = new ImageIcon(new ImageIcon("./src/inventorymanagerapp/images/"+imageName).getImage().getScaledInstance(panel.getWidth(), panel.getHeight(), Image.SCALE_DEFAULT));
-        panel.setIcon(MyLoginPageIcon);
+        ImageIcon MyIcon = new ImageIcon(new ImageIcon("/inventorymanagerapp/images/"+imageName).getImage().getScaledInstance(panel.getWidth(), panel.getHeight(), Image.SCALE_DEFAULT));
+        panel.setIcon(MyIcon);
     }
 
 }

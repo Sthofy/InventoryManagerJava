@@ -4,7 +4,6 @@ import inventorymanagerapp.others.DatabaseManager;
 import inventorymanagerapp.others.PasswordManager;
 
 import java.sql.*;
-import java.util.Arrays;
 import java.util.Vector;
 import javax.swing.RowFilter;
 import javax.swing.UIManager;

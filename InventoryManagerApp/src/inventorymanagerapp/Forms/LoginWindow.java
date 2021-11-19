@@ -3,6 +3,7 @@ package inventorymanagerapp.Forms;
 import inventorymanagerapp.others.DatabaseManager;
 import inventorymanagerapp.others.ImageEditor;
 import inventorymanagerapp.others.PasswordManager;
+
 import java.awt.event.KeyEvent;
 import java.sql.*;
 import javax.swing.UIManager;
@@ -43,7 +44,7 @@ public class LoginWindow extends javax.swing.JFrame {
     private void userLogger() {
 
         PromptDialog promptDialog;
-        String username = "", password = "";
+        String username, password;
 
         if (TxtBxPassword.getText().equals("") || TxtBxUsername.getText().equals("")) {
             promptDialog = new PromptDialog("Error", "Missing Username or Password");
@@ -352,10 +353,8 @@ public class LoginWindow extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new LoginWindow().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new LoginWindow().setVisible(true);
         });
     }
 
