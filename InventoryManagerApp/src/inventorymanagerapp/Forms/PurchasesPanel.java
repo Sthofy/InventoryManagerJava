@@ -296,12 +296,10 @@ public class PurchasesPanel extends java.awt.Panel {
         setPreferredSize(new java.awt.Dimension(970, 670));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        tblPurchases.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tblPurchases.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+
             },
             new String [] {
                 "ID", "Purchase Date", "Quantity", "Amount", "Account Name", "Username", "Item Name"

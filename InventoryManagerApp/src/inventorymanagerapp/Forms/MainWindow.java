@@ -51,9 +51,10 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         btnAdmin = new javax.swing.JButton();
         btnDashboard = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
         btnWarehouse = new javax.swing.JButton();
         btnAccounts = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
         Header = new javax.swing.JPanel();
         lblHeader = new javax.swing.JLabel();
         ContentPanel = new javax.swing.JPanel();
@@ -135,8 +136,14 @@ public class MainWindow extends javax.swing.JFrame {
 
         LeftPanel.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 160, 280, 10));
 
+        btnAdmin.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnAdmin.setText("Administrative");
-        LeftPanel.add(btnAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 680, 260, 70));
+        btnAdmin.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnAdminMouseClicked(evt);
+            }
+        });
+        LeftPanel.add(btnAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 440, 260, 70));
 
         btnDashboard.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnDashboard.setText("Dashboard");
@@ -146,9 +153,6 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
         LeftPanel.add(btnDashboard, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 200, 260, 70));
-
-        jButton2.setText("jButton1");
-        LeftPanel.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 440, 260, 70));
 
         btnWarehouse.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnWarehouse.setText("Warehouse");
@@ -167,6 +171,33 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
         LeftPanel.add(btnAccounts, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 360, 260, 70));
+
+        jButton1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jButton1.setText("Log out");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(167, Short.MAX_VALUE)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        LeftPanel.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 670, 260, -1));
 
         getContentPane().add(LeftPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 780));
 
@@ -250,6 +281,28 @@ public class MainWindow extends javax.swing.JFrame {
         ContentPanel.updateUI();
     }//GEN-LAST:event_btnAccountsMouseClicked
 
+    private void btnAdminMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAdminMouseClicked
+        lblHeader.setText("Admin");
+        ContentPanel.removeAll();
+        AdminPanel adminPanel=new AdminPanel();
+        adminPanel.setSize(970,670);
+        adminPanel.setLocation(15, 15);
+        ContentPanel.add(adminPanel);
+        adminPanel.setVisible(true);
+        ContentPanel.updateUI();
+    }//GEN-LAST:event_btnAdminMouseClicked
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        this.dispose();
+        
+        LoginWindow Login = new LoginWindow();
+        Login.setTitle("Sthofy Inventory Manager");
+        Login.setDefaultCloseOperation(LoginWindow.DISPOSE_ON_CLOSE);
+        Login.setResizable(false);
+        Login.setSize(360, 520);
+        Login.setVisible(true);
+    }//GEN-LAST:event_jButton1MouseClicked
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -290,9 +343,10 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton btnAdmin;
     private javax.swing.JButton btnDashboard;
     private javax.swing.JButton btnWarehouse;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JLabel lblAccessLevel;
     private javax.swing.JLabel lblHeader;
