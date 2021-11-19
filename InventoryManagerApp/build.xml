@@ -58,11 +58,7 @@
 
     An example of overriding the target for project execution could look like this:
 
-        <target name="run" depends="InventoryManagerApp-impl.jar">
-            <exec dir="bin" executable="launcher.exe">
-                <arg file="${dist.jar}"/>
-            </exec>
-        </target>
+        
 
     Notice that the overridden target depends on the jar target and not only on 
     the compile target as the regular run target does. Again, for a list of available 
@@ -70,4 +66,16 @@
     nbproject/build-impl.xml file. 
 
     -->
+    <target name="-post-jar">
+        <jar destfile="${dist.jar}"
+             update="true">
+            <restrict> 
+                <archives>
+                   <zips>
+                       <fileset dir="${dist.dir}" includes="lib/*.jar"/>
+                   </zips>
+                </archives>
+            </restrict>
+        </jar>
+    </target>
 </project>

@@ -6,8 +6,6 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Vector;
-import javafx.util.Pair;
 
 import javax.swing.DefaultListModel;
 
@@ -81,9 +79,6 @@ public class DashboardPanel extends java.awt.Panel {
             while (rs.next()) {
                 tempYear = String.valueOf(rs.getDate("PurchaseDate").toString().substring(0, 4));
                 tempMonth = String.valueOf(rs.getDate("PurchaseDate").toString().substring(5, 7));
-                //System.out.println(actualYear.length()+" "+tempYear.length()+" "+actualMonth.length()+" "+tempMonth.length());
-                //System.out.println(actualYear+" "+tempYear+" "+actualMonth+" "+tempMonth);
-                //System.out.println(actualYear.equals(tempYear)+" "+actualMonth.equals(tempMonth));
 
                 if (actualYear.equals(tempYear) && actualMonth.equals(tempMonth)) {
                     names.add(rs.getString("USERS_Username"));
