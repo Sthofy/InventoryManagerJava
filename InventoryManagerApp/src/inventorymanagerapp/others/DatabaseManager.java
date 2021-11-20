@@ -19,7 +19,10 @@ public class DatabaseManager {
         } catch (SQLException e) {
             e.printStackTrace();
             if (e.getErrorCode() == 0) { //Error Code 0: adatbázis offline
-                new PromptDialog("Error!", "Database server is offline!");
+                PromptDialog promptDialog = new PromptDialog("Error!", "Database server is offline!");
+                promptDialog.setResizable(false);
+                promptDialog.setDefaultCloseOperation(PromptDialog.DISPOSE_ON_CLOSE);
+                promptDialog.setVisible(true);
             }
             return null;
         }
