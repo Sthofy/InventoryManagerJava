@@ -2,6 +2,7 @@ package inventorymanagerapp.Forms;
 
 import inventorymanagerapp.others.DatabaseManager;
 import java.awt.event.KeyEvent;
+import javax.swing.UIManager;
 
 /**
  *
@@ -16,17 +17,26 @@ public class DatabaseLogin extends javax.swing.JFrame {
     private void login() {
         if (!dbUsername.getText().isEmpty() && !dbPassword.getText().isEmpty()) {
             DatabaseManager.setUserandPw(dbUsername.getText(), dbPassword.getText());
+            if (DatabaseManager.getConnection() == null) {
+                PromptDialog promptDialog = new PromptDialog("Error", "Wrong Username or Password!");
+                promptDialog.setResizable(false);
+                promptDialog.setDefaultCloseOperation(PromptDialog.DISPOSE_ON_CLOSE);
+                promptDialog.setVisible(true);
+            } else {
+                LoginWindow Login = new LoginWindow();
+                Login.setTitle("Sthofy Inventory Manager");
+                Login.setDefaultCloseOperation(LoginWindow.DISPOSE_ON_CLOSE);
+                Login.setResizable(false);
+                Login.setSize(360, 520);
+                Login.setVisible(true);
 
-            LoginWindow Login = new LoginWindow();
-            Login.setTitle("Sthofy Inventory Manager");
-            Login.setDefaultCloseOperation(LoginWindow.DISPOSE_ON_CLOSE);
-            Login.setResizable(false);
-            Login.setSize(360, 520);
-            Login.setVisible(true);
-            
-            this.dispose();
+                this.dispose();
+            }
         } else {
-            new PromptDialog("Error", "Missing Username or Password");
+            PromptDialog promptDialog = new PromptDialog("Error", "Missing Information!");
+            promptDialog.setResizable(false);
+            promptDialog.setDefaultCloseOperation(PromptDialog.DISPOSE_ON_CLOSE);
+            promptDialog.setVisible(true);
         }
     }
 
@@ -38,19 +48,15 @@ public class DatabaseLogin extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         dbUsername = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        dbPassword = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        dbPassword = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(390, 200));
         setMinimumSize(new java.awt.Dimension(390, 200));
         setModalExclusionType(java.awt.Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         setPreferredSize(new java.awt.Dimension(390, 200));
-        addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                formKeyPressed(evt);
-            }
-        });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -67,7 +73,6 @@ public class DatabaseLogin extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jLabel3.setText("Database Password:");
         getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, -1, 20));
-        getContentPane().add(dbPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 80, 200, -1));
 
         jButton1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jButton1.setText("Login");
@@ -78,6 +83,20 @@ public class DatabaseLogin extends javax.swing.JFrame {
         });
         getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 120, -1, -1));
 
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jCheckBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 80, -1, -1));
+
+        dbPassword.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                dbPasswordKeyPressed(evt);
+            }
+        });
+        getContentPane().add(dbPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 80, 170, -1));
+
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
@@ -86,11 +105,19 @@ public class DatabaseLogin extends javax.swing.JFrame {
         login();
     }//GEN-LAST:event_jButton1MouseClicked
 
-    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+        if (jCheckBox1.isSelected()) {
+            dbPassword.setEchoChar('\u0000');
+        } else {
+            dbPassword.setEchoChar((Character) UIManager.get("PasswordField.echoChar"));
+        }
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
+
+    private void dbPasswordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dbPasswordKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             login();
         }
-    }//GEN-LAST:event_formKeyPressed
+    }//GEN-LAST:event_dbPasswordKeyPressed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -128,9 +155,10 @@ public class DatabaseLogin extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField dbPassword;
+    private javax.swing.JPasswordField dbPassword;
     private javax.swing.JTextField dbUsername;
     private javax.swing.JButton jButton1;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
