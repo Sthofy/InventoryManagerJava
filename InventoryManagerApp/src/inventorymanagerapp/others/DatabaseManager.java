@@ -10,8 +10,8 @@ import java.sql.*;
 public class DatabaseManager {
 
     private static final String URL = "jdbc:mysql://localhost:3306/inventorymanagerdb?zeroDateTimeBehavior=convertToNull";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "Suhajdak970";
+    public static String USERNAME;
+    public static String PASSWORD;
 
     public static Connection getConnection() {
         Connection conn;
@@ -25,5 +25,9 @@ public class DatabaseManager {
             return null;
         }
         return conn;
+    }
+    public static void setUserandPw(String username,String password){
+        USERNAME=username;
+        PASSWORD=password;
     }
 }

@@ -1,5 +1,6 @@
 package inventorymanagerapp;
 
+import inventorymanagerapp.Forms.DatabaseLogin;
 import inventorymanagerapp.Forms.LoginWindow;
 
 /**
@@ -9,12 +10,11 @@ import inventorymanagerapp.Forms.LoginWindow;
 public class Main {
 
     public static void main(String[] args) {
-        LoginWindow Login = new LoginWindow();
-        Login.setTitle("Sthofy Inventory Manager");
-        Login.setDefaultCloseOperation(LoginWindow.DISPOSE_ON_CLOSE);
-        Login.setResizable(false);
-        Login.setSize(360, 520);
-        Login.setVisible(true);
+        DatabaseLogin dbLogin = new DatabaseLogin();
+        dbLogin.setTitle("Sthofy Inventory Manager");
+        dbLogin.setDefaultCloseOperation(LoginWindow.DISPOSE_ON_CLOSE);
+        dbLogin.setResizable(false);
+        dbLogin.setVisible(true);
     }
 
 }

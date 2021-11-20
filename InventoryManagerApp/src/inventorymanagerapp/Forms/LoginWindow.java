@@ -46,7 +46,7 @@ public class LoginWindow extends javax.swing.JFrame {
         PromptDialog promptDialog;
         String username, password;
 
-        if (TxtBxPassword.getText().equals("") || TxtBxUsername.getText().equals("")) {
+        if (TxtBxPassword.getText().isEmpty() || TxtBxUsername.getText().isEmpty()) {
             promptDialog = new PromptDialog("Error", "Missing Username or Password");
             promptDialog.setResizable(false);
             promptDialog.setDefaultCloseOperation(PromptDialog.DISPOSE_ON_CLOSE);
