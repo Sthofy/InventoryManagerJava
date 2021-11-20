@@ -182,16 +182,6 @@ CREATE TABLE `usercredents` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `usercredents`
---
-
-LOCK TABLES `usercredents` WRITE;
-/*!40000 ALTER TABLE `usercredents` DISABLE KEYS */;
-INSERT INTO `usercredents` VALUES ('Sthofy','admin');
-/*!40000 ALTER TABLE `usercredents` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `users`
 --
 
