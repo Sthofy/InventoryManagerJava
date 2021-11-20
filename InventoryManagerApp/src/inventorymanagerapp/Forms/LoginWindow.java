@@ -65,7 +65,7 @@ public class LoginWindow extends javax.swing.JFrame {
 
                 if (rs.next()) {
                     String storedPassword = rs.getString("Password");
-                    String salt = storedPassword.substring(0, 10);
+                    String salt = storedPassword.substring(0, 24);
 
                     if (PasswordManager.isValidPassword(password, salt, storedPassword)) {
                         loggerUsername = rs.getString("Username");

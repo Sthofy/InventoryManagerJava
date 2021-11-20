@@ -392,7 +392,7 @@ public class AdminPanel extends java.awt.Panel {
         jPanel2.add(rdBtnEmployeeChange, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 230, -1, -1));
 
         jButton2.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jButton2.setText("Add User");
+        jButton2.setText("Change");
         jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButton2MouseClicked(evt);
@@ -416,7 +416,6 @@ public class AdminPanel extends java.awt.Panel {
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("Delete User");
         jPanel3.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 150, 20));
-        jLabel4.getAccessibleContext().setAccessibleName("Delete User");
 
         txtBxDelete.setText("Enter Username");
         txtBxDelete.addFocusListener(new java.awt.event.FocusAdapter() {
